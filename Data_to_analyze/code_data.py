@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 from sodapy import Socrata
 import numpy as np
 import geopandas as gpd
-import seaborn as sns
 
 #%%
 
@@ -54,15 +53,21 @@ data_df = data_df.replace('RP  Metropolitana Nord', 'RP Metropolitana Nord')
 print(data_df['regi_policial_rp'].value_counts())
 #There are more values for RP Metropolitana Nord since there are more ABPs in it
 
+
+#We need to change the number of visits to a integer, since now is considered an string
+data_df['nombre_de_visites'] = data_df['nombre_de_visites'].astype('int')
+
+#We also need to transform the data of time into seconds to work easier
+
+
+
+
 #%%
 #Specific ABP
 ABP = 'Alt Urgell'
 single_ABP = data_df[data_df['rea_b_sica_policial_abp'] == 'ABP ' + ABP]
 
-#ABP_Granollers_mes_visites = ABP_Granollers[['mes','nombre_de_visites']]
-
 mes_visites = pd.DataFrame({'Mes':single_ABP.loc[:,'nom_mes'], 'Nombre visites':single_ABP.loc[:,'nombre_de_visites']})
-mes_visites['Nombre visites'] = mes_visites['Nombre visites'].astype('int')
 mes_visites = mes_visites.set_index('Mes')
 
 #To plot the number of visits in one specific ABP
@@ -83,39 +88,31 @@ number_of_years = 10 #to divide and obtain the mean for all years (from 2011 to 
 list_RP = [i for i in (visites_RP['regi_policial_rp'].value_counts()).index]
 
 mean_visites_RP = []
-#%%
-
-#(data_df['regi_policial_rp'].value_counts())['RP Ponent'] #to refear a value of
-
 visites_RP = visites_RP.set_index('regi_policial_rp')
-#%%
+
 for RP in list_RP:
-    #specific_RP = [i for i in (visites_RP['regi_policial_rp'].value_counts())[RP]]
     
-    if visites_RP.index==RP:
-        mean_visites_RP.append(sum())
-    
-    #for row in range(0,len(visites_RP['regi_policial_rp'])):
-    
-        
+    specific_RP = visites_RP.loc[RP]
+    #Compute the mean for all RPs, round the number and append into the list
+    mean_visites_RP.append(np.round(sum(specific_RP.nombre_de_visites)/number_of_years, decimals=0))
 
-    
+mean_visites_RP = [int(i) for i in mean_visites_RP] #transform the mean visits into integers
 
+#Create a new DataFrame in order to plot
+mean_visites_RP = pd.DataFrame(data=mean_visites_RP, index=list_RP, columns=['Mean number of visits'])
 
-
-mean_visites_RP = pd.DataFrame(visites_RP) #transform the list into a DataFrame
-
+#Plot the average number of visits per year for every RP
+mean_visites_RP.plot(kind='bar', ylabel='Average number fo visits per year', 
+                     rot=90, legend=False, )
+plt.tight_layout()
 
 
 #%%
-visites_RP.plot(kind='bar', title='Number of visits for RP', xlabel='RP', ylabel='Average number fo visits', 
-                rot=60, stacked=False, legend=False)
+#We want to plot the average time that takes to be attended after entering the police department
 
 
 
 
-
-#%%
 '''
 data_df['mitjana_temps_espera'] = pd.to_datetime(data_df['mitjana_temps_espera'])
 
@@ -133,6 +130,7 @@ data_df['mitjana_temps_espera'] = data_df['mitjana_temps_espera'].datatime.hour 
 #%%
 
 #counts = data_df.value_counts()
+#ABP_Granollers_mes_visites = ABP_Granollers[['mes','nombre_de_visites']]
 ##############################################
 
 #Typo problem from 2017, where there is only 1 blankspace between RP and Metropolitana
