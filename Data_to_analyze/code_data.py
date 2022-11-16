@@ -80,25 +80,30 @@ visites_RP = data_df[['regi_policial_rp','nombre_de_visites']].copy()
 number_of_years = 10 #to divide and obtain the mean for all years (from 2011 to 2021)
 
 #Write all the RPs in a list
-list_RP = [i for i in (data_df['regi_policial_rp'].value_counts()).index]
-
+list_RP = [i for i in (visites_RP['regi_policial_rp'].value_counts()).index]
 
 mean_visites_RP = []
 #%%
 
-(data_df['regi_policial_rp'].value_counts())['RP Ponent']
+#(data_df['regi_policial_rp'].value_counts())['RP Ponent'] #to refear a value of
 
+visites_RP = visites_RP.set_index('regi_policial_rp')
+#%%
 for RP in list_RP:
-    specific_RP = [i for i in (data_df['regi_policial_rp'].value_counts())[RP]]
-    for row in range(0,len(data_df['regi_policial_rp'])):
-        if data_df.loc[row,'regi_policial_rp']==0:
+    #specific_RP = [i for i in (visites_RP['regi_policial_rp'].value_counts())[RP]]
+    
+    if visites_RP.index==RP:
+        mean_visites_RP.append(sum())
+    
+    #for row in range(0,len(visites_RP['regi_policial_rp'])):
+    
         
 
-    visites_RP.append(sum())
+    
 
 
 
-visites_RP = pd.DataFrame(visites_RP)
+mean_visites_RP = pd.DataFrame(visites_RP) #transform the list into a DataFrame
 
 
 
