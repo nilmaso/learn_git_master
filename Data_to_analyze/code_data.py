@@ -91,7 +91,6 @@ mean_visites_RP = []
 visites_RP = visites_RP.set_index('regi_policial_rp')
 
 for RP in list_RP:
-    
     specific_RP = visites_RP.loc[RP]
     #Compute the mean for all RPs, round the number and append into the list
     mean_visites_RP.append(np.round(sum(specific_RP.nombre_de_visites)/number_of_years, decimals=0))
@@ -100,6 +99,7 @@ mean_visites_RP = [int(i) for i in mean_visites_RP] #transform the mean visits i
 
 #Create a new DataFrame in order to plot
 mean_visites_RP = pd.DataFrame(data=mean_visites_RP, index=list_RP, columns=['Mean number of visits'])
+
 
 #Plot the average number of visits per year for every RP
 mean_visites_RP.plot(kind='bar', ylabel='Average number fo visits per year', 
